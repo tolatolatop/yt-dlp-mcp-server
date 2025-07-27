@@ -2,13 +2,14 @@ import os
 from dotenv import load_dotenv
 from websockets import connect
 from .schemas import CommandMessage, CommandResultMessage, ClientIdMessage, MessageType
+from .schemas import Cookies
 
 load_dotenv('.env.prod')
 
 USER_PROXY_URL = os.getenv("USER_PROXY_URL")
 
 
-async def get_cookies(user_proxy_id: str, domain: str):
+async def get_cookies(user_proxy_id: str, domain: str) -> Cookies:
     """
     获取指定域名的cookies
     Args:
@@ -28,4 +29,6 @@ async def get_cookies(user_proxy_id: str, domain: str):
             data={"domain": domain}
         ).model_dump_json())
         response = await ws.recv()
-    return CommandResultMessage.model_validate_json(response)
+    message = CommandResultMessage.model_validate_json(response)
+    cookies = Cookies.model_validate(message.result)
+    return cookies

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 from datetime import datetime
 from enum import Enum
 
@@ -45,3 +45,29 @@ class CommandResultMessage(BaseModel):
 
 # 联合类型，用于处理所有类型的WebSocket消息
 WebSocketMessage = CommandMessage | CommandResultMessage
+
+
+class Cookie(BaseModel):
+    """cookies"""
+    name: str = Field(..., description="cookie名称")
+    value: str = Field(..., description="cookie值")
+    domain: str = Field(default="", description="域名")
+    httpOnly: bool = Field(default=False, description="是否为httpOnly")
+    secure: bool = Field(default=False, description="是否为secure")
+    # 将float转换为int
+    expirationDate: float = Field(default=0, description="过期时间")
+
+
+class Cookies(BaseModel):
+    """cookies"""
+    cookies: List[Cookie] = Field(..., description="cookies")
+
+    def to_netscape_formatcookies_txt(self):
+        """转换为cookies.txt格式"""
+        bodys = "#domain\tHTTP/Secure\tExpires\tName\tValue"
+        for cookie in self.cookies:
+            http_only = "TRUE" if cookie.httpOnly else "FALSE"
+            secure = "TRUE" if cookie.secure else "FALSE"
+            expiration_date = int(cookie.expirationDate)
+            bodys += f"\n{cookie.domain}\t{http_only}\t{secure}\t{expiration_date}\t{cookie.name}\t{cookie.value}"
+        return bodys

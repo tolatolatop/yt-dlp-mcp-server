@@ -1,17 +1,12 @@
-import logging
 import os
 import asyncio
+
+from .logs import logger
+
 from fastmcp import FastMCP
 from yt_dlp import YoutubeDL
 from .userproxy import get_cookies_file
 from .userproxy import get_domain
-
-# 配置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 mcp = FastMCP(name="YoutubeDLPServer")
 
@@ -65,7 +60,7 @@ async def download_video(
     if user_proxy_id:
         domain = get_domain(url)
         async with get_cookies_file(user_proxy_id, domain) as cookies_file:
-            ydl_opts["cookies"] = cookies_file.absolute().as_posix()
+            ydl_opts["cookiefile"] = cookies_file.absolute().as_posix()
             return await asyncio.to_thread(download_video_with_cookies, ydl_args)
     else:
         return await asyncio.to_thread(download_video_with_cookies, ydl_args)

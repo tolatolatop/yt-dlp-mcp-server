@@ -2,7 +2,7 @@ import os
 import contextlib
 from urllib.parse import urlparse
 from pathlib import Path
-from tempfile import TemporaryFile
+from tempfile import NamedTemporaryFile
 from dotenv import load_dotenv
 from websockets import connect
 from .schemas import CommandMessage, CommandResultMessage, ClientIdMessage, MessageType
@@ -43,7 +43,7 @@ async def get_cookies_file(user_proxy_id: str, domain: str):
     """
     获取指定域名的cookies
     """
-    with TemporaryFile(prefix="cookies_", suffix=".txt") as temp_file:
+    with NamedTemporaryFile(prefix="cookies_", suffix=".txt") as temp_file:
         cookies = await get_cookies(user_proxy_id, domain)
         temp_file.write(cookies.to_netscape_formatcookies_txt().encode())
         temp_file.seek(0)

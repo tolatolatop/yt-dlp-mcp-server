@@ -1,12 +1,12 @@
 import os
 import asyncio
 
-from .logs import logger
+from yt_dlp_server.logs import logger
 
 from fastmcp import FastMCP
 from yt_dlp import YoutubeDL
-from .userproxy import get_cookies_file
-from .userproxy import get_domain
+from yt_dlp_server.userproxy import get_cookies_file
+from yt_dlp_server.userproxy import get_domain
 
 mcp = FastMCP(name="YoutubeDLPServer")
 

@@ -1,4 +1,7 @@
 import os
+import contextlib
+from pathlib import Path
+from tempfile import TemporaryFile
 from dotenv import load_dotenv
 from websockets import connect
 from .schemas import CommandMessage, CommandResultMessage, ClientIdMessage, MessageType
@@ -32,3 +35,15 @@ async def get_cookies(user_proxy_id: str, domain: str) -> Cookies:
     message = CommandResultMessage.model_validate_json(response)
     cookies = Cookies.model_validate(message.result)
     return cookies
+
+
+@contextlib.contextmanager
+async def get_cookies_file(user_proxy_id: str, domain: str):
+    """
+    获取指定域名的cookies
+    """
+    with TemporaryFile(prefix="cookies_", suffix=".txt") as temp_file:
+        cookies = await get_cookies(user_proxy_id, domain)
+        temp_file.write(cookies.to_netscape_formatcookies_txt().encode())
+        temp_file.seek(0)
+        yield Path(temp_file.name)

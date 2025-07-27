@@ -1,5 +1,6 @@
 import os
 import contextlib
+from urllib.parse import urlparse
 from pathlib import Path
 from tempfile import TemporaryFile
 from dotenv import load_dotenv
@@ -47,3 +48,10 @@ async def get_cookies_file(user_proxy_id: str, domain: str):
         temp_file.write(cookies.to_netscape_formatcookies_txt().encode())
         temp_file.seek(0)
         yield Path(temp_file.name)
+
+
+def get_domain(url: str) -> str:
+    """
+    获取url的域名
+    """
+    return "." + ".".join(urlparse(url).netloc.split(".")[-2:])

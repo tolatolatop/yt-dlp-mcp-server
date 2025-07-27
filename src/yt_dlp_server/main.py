@@ -1,5 +1,6 @@
 import logging
 import os
+import asyncio
 from fastmcp import FastMCP
 from yt_dlp import YoutubeDL
 
@@ -50,6 +51,20 @@ async def download_video(url: str, output_path: str = "./.temp/downloads") -> st
         'progress_hooks': [progress_hook],
         'format': 'best',  # 下载最佳质量
     }
+
+    ydl_args = {
+        "url": url,
+        "output_path": output_path,
+        "ydl_opts": ydl_opts,
+    }
+
+    return await asyncio.to_thread(download_video_with_cookies, ydl_args)
+
+
+def download_video_with_cookies(ydl_args: dict):
+    url = ydl_args["url"]
+    output_path = ydl_args["output_path"]
+    ydl_opts = ydl_args["ydl_opts"]
 
     try:
         with YoutubeDL(ydl_opts) as ydl:

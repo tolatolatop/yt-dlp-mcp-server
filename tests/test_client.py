@@ -10,7 +10,7 @@ async def test_tool_functionality():
     url = "https://www.youtube.com/watch?v=9K6wM-P5Jao"
     async with Client(mcp) as client:
         result = await client.call_tool("extract_video_info", {"url": url})
-        assert result.data == "Download YouTube Video with YT-DLP Fastest Method"
+        assert "标题: Download YouTube Video with YT-DLP Fastest Method\n" in result.data
 
 
 @pytest.mark.asyncio

@@ -19,7 +19,7 @@ async def test_download_video():
     url = "https://www.youtube.com/watch?v=9K6wM-P5Jao"
     async with Client(mcp) as client:
         output_path = "./.pytest_cache/temp"
-        result = await client.call_tool("download_video", {"url": url, "output_path": output_path})
+        result = await client.call_tool("download_video", {"url": url})
         assert result.data == "视频 'Download YouTube Video with YT-DLP Fastest Method' 下载完成，保存在 ./.pytest_cache/temp 目录"
 
 
@@ -27,8 +27,6 @@ async def test_download_video():
 async def test_download_video_with_cookies():
     # Pass the server directly to the Client constructor
     url = "https://www.youtube.com/watch?v=g0C4CsititQ"
-    user_proxy_id = "test_user"
-    output_path = "./.pytest_cache/temp"
     async with Client(mcp) as client:
-        result = await client.call_tool("download_video", {"url": url, "output_path": output_path, "user_proxy_id": user_proxy_id})
+        result = await client.call_tool("download_video", {"url": url})
         assert result.data == "视频 'Download YouTube Video with YT-DLP Fastest Method' 下载完成，保存在 ./.pytest_cache/temp 目录"

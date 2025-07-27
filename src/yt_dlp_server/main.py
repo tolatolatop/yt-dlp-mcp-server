@@ -3,6 +3,7 @@ import os
 import asyncio
 from fastmcp import FastMCP
 from yt_dlp import YoutubeDL
+from .userproxy import get_cookies_file
 
 # 配置日志
 logging.basicConfig(
@@ -40,7 +41,12 @@ def progress_hook(d):
 
 
 @mcp.tool(name="download_video")
-async def download_video(url: str, output_path: str = "./.temp/downloads") -> str:
+async def download_video(
+    url: str,
+    output_path: str = "./.temp/downloads",
+    user_proxy_id: str = None,
+    domain: str = None
+) -> str:
     """Download a video from a given URL."""
     logger.info(f"开始下载视频: {url}")
     os.makedirs(output_path, exist_ok=True)
@@ -51,14 +57,17 @@ async def download_video(url: str, output_path: str = "./.temp/downloads") -> st
         'progress_hooks': [progress_hook],
         'format': 'best',  # 下载最佳质量
     }
-
     ydl_args = {
         "url": url,
         "output_path": output_path,
         "ydl_opts": ydl_opts,
     }
-
-    return await asyncio.to_thread(download_video_with_cookies, ydl_args)
+    if user_proxy_id and domain:
+        async with get_cookies_file(user_proxy_id, domain) as cookies_file:
+            ydl_opts["cookies"] = cookies_file.absolute().as_posix()
+            return await asyncio.to_thread(download_video_with_cookies, ydl_args)
+    else:
+        return await asyncio.to_thread(download_video_with_cookies, ydl_args)
 
 
 def download_video_with_cookies(ydl_args: dict):

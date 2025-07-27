@@ -37,7 +37,7 @@ async def get_cookies(user_proxy_id: str, domain: str) -> Cookies:
     return cookies
 
 
-@contextlib.contextmanager
+@contextlib.asynccontextmanager
 async def get_cookies_file(user_proxy_id: str, domain: str):
     """
     获取指定域名的cookies

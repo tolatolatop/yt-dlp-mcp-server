@@ -39,10 +39,11 @@ def progress_hook(d):
 @mcp.tool(name="download_video")
 async def download_video(
     url: str,
-    output_path: str = "./.temp/downloads",
-    user_proxy_id: str = None,
+
 ) -> str:
     """Download a video from a given URL."""
+    output_path: str = os.getenv("OUTPUT_PATH")
+    user_proxy_id: str = os.getenv("USER_PROXY_ID")
     logger.info(f"开始下载视频: {url}")
     os.makedirs(output_path, exist_ok=True)
 
@@ -50,7 +51,7 @@ async def download_video(
     ydl_opts = {
         'outtmpl': f'{output_path}/%(title)s.%(ext)s',
         'progress_hooks': [progress_hook],
-        'format': 'best',  # 下载最佳质量
+        'format': 'bestvideo+bestaudio/best',  # 下载最佳质量
     }
     ydl_args = {
         "url": url,

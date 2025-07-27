@@ -12,5 +12,13 @@ async def download_video(url: str) -> str:
         return info_dict["title"]
 
 
+@mcp.tool(name="extract_video_info")
+async def extract_video_info(url: str) -> str:
+    """Extract video information from a given URL."""
+    with YoutubeDL() as ydl:
+        info_dict = ydl.extract_info(url, download=False)
+        return info_dict["title"]
+
+
 if __name__ == "__main__":
     mcp.run(transport="http", host="0.0.0.0", port=58000)

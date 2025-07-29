@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, Dict, List
 from datetime import datetime
 from enum import Enum
+import uuid
 
 
 class MessageType(str, Enum):
@@ -27,7 +28,8 @@ class CommandMessage(BaseModel):
     data: Optional[Dict] = Field(None, description="命令相关的数据")
     timestamp: datetime = Field(
         default_factory=datetime.now, description="时间戳")
-    request_id: Optional[str] = Field(None, description="请求ID，用于追踪")
+    request_id: Optional[str] = Field(
+        description="请求ID，用于追踪", default_factory=lambda: str(uuid.uuid4()))
 
 
 class CommandResultMessage(BaseModel):

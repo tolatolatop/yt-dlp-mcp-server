@@ -29,6 +29,9 @@ async def download_video(url: str) -> str:
         'outtmpl': f'{output_path}/%(title)s.%(ext)s',
         'progress_hooks': [make_progress_hook(progress_queue)],
         'format': 'bestvideo+bestaudio/best',
+        'merge_output_format': 'mp4',
+        'prefer_ffmpeg': True,
+        'postprocessor_args': ['-strict', 'experimental'],  # 容许 FLAC 等实验性音频格式
     }
 
     ydl_args = {
@@ -50,7 +53,10 @@ async def download_video(url: str) -> str:
         await progress_queue.put(None)
         await progress_task  # 等待后台处理完毕
 
-    return result
+    if isinstance(result, Exception):
+        raise result
+    else:
+        return result
 
 
 def make_progress_hook(queue: asyncio.Queue):
@@ -116,7 +122,7 @@ def download_video_with_cookies(ydl_args: dict):
     except Exception as e:
         error_msg = f"下载失败: {str(e)}"
         logger.error(error_msg)
-        return error_msg
+        return e
 
 
 @mcp.tool(name="extract_video_info")

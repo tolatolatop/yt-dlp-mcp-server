@@ -12,10 +12,15 @@ mcp = FastMCP(name="YoutubeDLPServer")
 
 
 @mcp.tool(name="download_video")
-async def download_video(url: str) -> str:
-    """Download a video from a given URL."""
+async def download_video(url: str, token: str = None) -> str:
+    """Download a video from a given URL.
+
+    Args:
+        url: 视频URL
+        token: 用户token
+    """
     output_path: str = os.getenv("OUTPUT_PATH")
-    user_proxy_id: str = os.getenv("USER_PROXY_ID")
+    user_proxy_id: str = token
     logger.info(f"开始下载视频: {url}")
     os.makedirs(output_path, exist_ok=True)
 
